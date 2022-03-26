@@ -1,0 +1,84 @@
+#include <iostream>
+using namespace std;
+
+struct stack {
+    int inf;
+    stack* next;
+};
+
+
+void push(stack*& h, int x) {
+    stack* r = new stack; //создаем новый элемент
+    r->inf = x; //поле inf = x
+    r->next = h; //следующим элементов является h
+    h = r; //теперь r является головой
+
+}
+
+int pop(stack*& h) {
+    int i = h->inf; //значение первого элемента
+    stack* r = h; //указатель на голову стека
+    h = h->next; //переносим указатель на следующий элемент
+    delete r; //удаляем первый элемент
+    return i; //возвращаем значение
+}
+
+
+void reverse(stack*& h) { //"обращение"стека
+    stack* head1 = NULL; //инициализация буферного стека
+    while (h) //пока стек не пуст
+        push(head1, pop(h)); //переписываем из одного стека в другой
+    h = head1; //переобозначаем указатели
+
+}
+
+int max(stack*& h) {
+    stack* head1 = NULL;
+    int max = h->inf;
+    while (h) {
+        int l = pop(h);
+        push(head1, l);
+        if (l > max) {
+            max = l;
+        }
+    }
+    h = head1;
+    return max;
+}
+
+void task(stack*& h, int max) {
+    stack* head1 = NULL;
+    while (h) {
+        if (h->inf == max) {
+            pop(h);
+        }
+        else {
+            push(head1, pop(h));
+        }
+    }
+    h = head1;
+}
+
+int main()
+{
+    stack* h = NULL;
+    int n; //кол-во элементов
+    int input; //ввод данных
+    cout << "Enter n: ";
+    cin >> n;
+    cout << endl;
+    while (n > 0) {
+        cin >> input;
+        push(h, input);
+        n--;
+    }
+
+    int m = max(h);
+    task(h, m);
+    reverse(h);
+
+    while (h) {
+        cout << pop(h) << ' ';
+    }
+    return 0;
+}

@@ -1,0 +1,71 @@
+#include <iostream>
+using namespace std;
+
+struct stack {
+    string inf;
+    stack* next;
+};
+
+void push(stack*& h, string x) {
+    stack* r = new stack; //создаем новый элемент
+    r->inf = x; //поле inf = x
+    r->next = h; //следующим элементов является h
+    h = r; //теперь r является головой
+   
+}
+
+string pop(stack*& h) {
+    string i = h->inf; //значение первого элемента
+    stack * r = h; //указатель на голову стека
+    h = h->next; //переносим указатель на следующий элемент
+    delete r; //удаляем первый элемент
+    return i; //возвращаем значение
+}
+
+void reverse(stack*& h) { //"обращение"стека
+    stack* head1 = NULL; //инициализация буферного стека
+    while (h) //пока стек не пуст
+        push(head1, pop(h)); //переписываем из одного стека в другой
+    h = head1; //переобозначаем указатели
+    
+}
+
+void task(stack*& h, char l) {
+    stack* head1 = NULL;
+    while (h) {
+        if (h->inf[h->inf.size() - 1] != l) {
+            push(head1, pop(h));
+        }
+        else {
+            pop(h);
+        }
+    }
+    h = head1;
+}
+
+int main()
+{
+    setlocale(LC_ALL, "RUS");
+    stack* h = NULL;
+    char liter;
+    cout << "Введите букву: ";
+    cin >> liter;
+    cout << endl;
+    cout << "Введите слова и 0 чтобы перестать." << endl;
+    string input;
+
+    while (input != "0") { //Ввод данных 
+        cin >> input;
+        if (input != "0") {
+            push(h, input);
+        }
+    }
+
+    task(h, liter); //задание
+
+    while (h) {
+        cout << pop(h) << ' ';
+    }
+    return 0;
+}
+
