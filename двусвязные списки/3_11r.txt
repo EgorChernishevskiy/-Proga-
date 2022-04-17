@@ -1,0 +1,155 @@
+#include <iostream>
+using namespace std;
+
+struct node {
+    int value;
+    node* prev, * next;
+};
+
+class List {
+public:
+    node* head, * tail;
+
+
+    List() { // конструктор 
+        head = tail = NULL;
+
+    }
+
+    ~List() { // деструктор 
+        while (head->next != NULL) {
+            node* p = head;
+            head = head->next;
+            head->prev = NULL;
+            delete p;
+        }
+        head->next = NULL;
+        head->prev = NULL;
+        head->value = NULL;
+    }
+
+    void push_back(int x) { // добавление в конец
+        node* r = new node; //создаем новый элемент
+        r->value = x;
+        r->next = NULL;//всегда последний
+        if (!head && !tail) {//если список пуст
+            r->prev = NULL;//первый элемент
+            head = r;//это голова
+        }
+        else {
+            tail->next = r;//r - следующий для хвоста
+            r->prev = tail;//хвост - предыдущий для r
+        }
+        tail = r;//r теперь хвост
+
+    }
+
+    void print() {// вывод всего списка
+        node* p = head;//укзатель на голову
+
+        while (p) {//пока не дошли до конца списка
+            cout << p->value << " ";
+            p = p->next;//переход к следующему элементу
+        }
+
+    }
+
+    node* find(int x) { // поиск элемента по значению
+        node* p = head;//укзатель на голову
+        while (p) { // если нашли, прекращаем цикл
+            if (p->value == x) { // если нашли, прекращаем цикл
+                break;
+            }
+            p = p->next;//переход к следующему элементу
+        }
+        return p;//возвращаем указатель
+    }
+
+    void insert_after(node* r, int y) { // вставка после элемента 
+        node* p = new node; //создаем новый элемент
+        p->value = y;
+        if (r == tail) {//если вставляем после хвоста
+            p->next = NULL; // вставляемый эл - т - последний
+            p->prev = r;//вставляем после r
+            r->next = p;
+            tail = p;//теперь хвост - p
+        }
+        else {//вставляем в середину списка
+            r->next->prev = p;//для следующего за r эл-та предыдущий - p
+            p->next = r->next;//следующий за p - следующий за r
+            p->prev = r;//p вставляем после r
+            r->next = p;
+        }
+
+    }
+
+    int del_element(node* r) {//удаление элемента
+        if (r == head && r == tail) {
+            head = tail = NULL;
+        }
+        else if (head == r) {
+            head = head->next;
+            head->prev = NULL;
+        }
+        else if (r == tail) {
+            tail = tail->prev;
+            tail->next = NULL;
+        }
+        else {
+            r->next->prev = r->prev;//для следующего от r предыдущим становится r->prev
+            r->prev->next = r->next; // для предыдущего от r следующим становится r->next
+        }
+        int result;
+        result = r->value;
+        delete r;//удаляем r
+        return result;
+    }
+
+
+};
+
+int average(List& l, node* r) {//среднее арифметическое
+    r = r->next;
+    int sum = 0;
+    int c = 0;
+    while (r) {
+        sum += r->value;
+        c++;
+        r = r->next;
+    }
+    return sum / c;
+}
+
+int main()
+{
+    setlocale(LC_ALL, "RUS");
+    int n;
+    cout << "Введите кол-во элменентов: ";//ввод даннных
+    cin >> n;
+    cout << "Введите элмененты: ";
+    int input;
+
+    List* list = new List;
+    while (n > 0) {
+        cin >> input;
+        list->push_back(input);
+        n--;
+    }
+
+    node* p = list->head;   
+    while (p->next) {
+        if (p->value < average(*list, p)) {
+            list->del_element(p);
+            p = list->head;            
+        }
+        else {
+            p = p->next;
+        }
+    }
+
+    list->print();
+    
+
+    delete list;
+    return 0;
+}
