@@ -2,7 +2,7 @@
 
 using namespace std;
 
-struct tree {//стуктура дерева
+struct tree {//Г±ГІГіГЄГІГіГ°Г  Г¤ГҐГ°ГҐГўГ 
 	int inf;
 	tree* right;
 	tree* left;
@@ -15,7 +15,7 @@ tree* node(int x) {
 	return p;
 }
 
-void create(tree*& tr, int n) {//создание дерева
+void create(tree*& tr, int n) {//Г±Г®Г§Г¤Г Г­ГЁГҐ Г¤ГҐГ°ГҐГўГ 
 	int x;
 	if (n > 0) {
 		cin >> x;
@@ -28,7 +28,7 @@ void create(tree*& tr, int n) {//создание дерева
 	}
 }
 
-void task(tree* tr, int h, int k) {//Вывести узлы k-ого уровня
+void task(tree* tr, int h, int k) {//Г‚Г»ГўГҐГ±ГІГЁ ГіГ§Г«Г» k-Г®ГЈГ® ГіГ°Г®ГўГ­Гї
 	if (h == k) {
 		cout << tr->inf << ' ';
 	}
@@ -47,12 +47,12 @@ int main() {
 	cout << "n = "; cin >> n;
 
 	tree* tr = NULL;
-	create(tr, n);//ввод
+	create(tr, n);//ГўГўГ®Г¤
 
 	int k;
 	cout << "Enter k: "; cin >> k;
 
-	task(tr, 0, k);//вывод
+	task(tr, 0, k);//ГўГ»ГўГ®Г¤
 
 
 
