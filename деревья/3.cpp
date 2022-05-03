@@ -2,7 +2,7 @@
 
 using namespace std;
 
-struct tree {//ñòóêòóğà äåğåâà
+struct tree {//Ã±Ã²Ã³ÃªÃ²Ã³Ã°Ã  Ã¤Ã¥Ã°Ã¥Ã¢Ã 
 	int inf;
 	tree* right;
 	tree* left;
@@ -15,7 +15,7 @@ tree* node(int x) {
 	return p;
 }
 
-void create(tree*& tr, int n) {//ñîçäàíèå äåğåâà
+void create(tree*& tr, int n) {//Ã±Ã®Ã§Ã¤Ã Ã­Ã¨Ã¥ Ã¤Ã¥Ã°Ã¥Ã¢Ã 
 	int x;
 	if (n > 0) {
 		cin >> x;
@@ -28,8 +28,8 @@ void create(tree*& tr, int n) {//ñîçäàíèå äåğåâà
 	}
 }
 
-int count(tree* tr) {//ôóíêöèÿ ïîäñ÷åòà êîë-âà ëèñòüåâ
-	int k = 0;//êîë-âî ëèñòüåâ
+int count(tree* tr) {//Ã´Ã³Ã­ÃªÃ¶Ã¨Ã¿ Ã¯Ã®Ã¤Ã±Ã·Ã¥Ã²Ã  ÃªÃ®Ã«-Ã¢Ã  Ã«Ã¨Ã±Ã²Ã¼Ã¥Ã¢
+	int k = 0;//ÃªÃ®Ã«-Ã¢Ã® Ã«Ã¨Ã±Ã²Ã¼Ã¥Ã¢
 	if (!tr->right && !tr->left) {
 		return k += 1;
 	}
@@ -51,9 +51,9 @@ int main() {
 	cout << "n = "; cin >> n;
 
 	tree* tr = NULL;
-	create(tr, n);//ââîä
+	create(tr, n);//Ã¢Ã¢Ã®Ã¤
 
-	cout << "c = " << count(tr) << endl;//âûâîä
+	cout << "c = " << count(tr) << endl;//Ã¢Ã»Ã¢Ã®Ã¤
 
 
 }
