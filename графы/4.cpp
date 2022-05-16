@@ -11,12 +11,13 @@ int main()
     cin >> n >> m;
     vector < vector<int> > g(n); // граф
     int s = 0; // начальная вершина
-    for (int i = 0; i < m; i++ ) // считывание графа
-    {
-        int u, v;
-        cin >> u >> v;
-        g[u - 1].push_back(v - 1);
-        g[v - 1].push_back(u - 1);
+    int x, y;
+    for (int i = 0; i < m; i++) {
+        cin >> x >> y;
+        if (x < n && y < n) {
+            g[x].push_back(y);
+            g[y].push_back(x);
+        }
     }
     queue<int> q; // очередь с вершинами, которые мы рассматриваем на данном этапе
     q.push(s);
