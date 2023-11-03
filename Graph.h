@@ -24,7 +24,7 @@ public:
 		Weighted = stoi(strMain.substr(2, 1));
 		Oriented = stoi(strMain.substr(0, 1));
 		while (getline(in, strMain)) {
-			
+
 			int i = 0;
 			string strDop;
 			string strDopWeight;
@@ -60,7 +60,7 @@ public:
 	Graph(const Graph& g)
 	{
 		Weighted = g.Weighted;
-		Oriented = g.Oriented; 
+		Oriented = g.Oriented;
 		v = g.v;
 	}
 
@@ -108,7 +108,7 @@ public:
 	}
 	bool NodeConnect(string node1, string node2, int w) {         //добавить ребро
 		if (v.find(node1) != v.end() && v.find(node2) != v.end()) {
-			if (findInCertainNode(node1,node2)) {
+			if (findInCertainNode(node1, node2)) {
 				cout << "Вершины уже соединины" << endl;
 				return false;
 			}
@@ -191,7 +191,7 @@ public:
 
 	}
 
-	bool findInNodeList (string nodeToFind) {
+	bool findInNodeList(string nodeToFind) {
 		for (auto element : v) {
 			if (findInCertainNode(element.first, nodeToFind)) {
 				return true;
@@ -200,7 +200,7 @@ public:
 		return false;
 	}
 
-	bool findInCertainNode (string nodeMain, string nodeToFind) {
+	bool findInCertainNode(string nodeMain, string nodeToFind) {
 		set<pair<string, int>> v2 = v[nodeMain];
 		for (auto it = v2.begin(); it != v2.end(); it++) {
 			if (it->first == nodeToFind) {
@@ -214,7 +214,7 @@ public:
 	void Print() {
 		cout << "Граф: ";
 		if (Oriented) cout << "Ориентированный, ";
-		else cout << "Неориентированный, "; 
+		else cout << "Неориентированный, ";
 		if (Weighted) cout << "Взвешенный" << endl;
 		else cout << "Невзвешенный" << endl;
 		for (auto element : v) {
@@ -360,110 +360,60 @@ public:
 
 		return true; // Если циклов не найдено, то граф является ацикличным
 	}
-	// Метод для нахождения всех достижимых из данной вершины вершин, из которых можно попасть обратно
-	void findReachableAndReturnable1(string startVertex) {
-		set<string> reachableAndReturnable; // Множество для хранения всех достижимых и обратно достижимых вершин
-		queue<string> forwardQ; // Очередь для обхода графа в прямом направлении
-		queue<string> backwardQ; // Очередь для обхода графа в обратном направлении
 
-		forwardQ.push(startVertex);
-		backwardQ.push(startVertex);
-		reachableAndReturnable.insert(startVertex);
-
-		while (!forwardQ.empty() && !backwardQ.empty()) {
-			string forwardVertex = forwardQ.front();
-			forwardQ.pop();
-
-			string backwardVertex = backwardQ.front();
-			backwardQ.pop();
-
-			for (auto it = v[forwardVertex].begin(); it != v[forwardVertex].end(); ++it) {
-				string forwardNeighbor = it->first;
-				if (reachableAndReturnable.find(forwardNeighbor) == reachableAndReturnable.end()) {
-					forwardQ.push(forwardNeighbor);
-					reachableAndReturnable.insert(forwardNeighbor);
-				}
-			}
-
-			for (auto it = v[backwardVertex].rbegin(); it != v[backwardVertex].rend(); ++it) {
-				string backwardNeighbor = it->first;
-				if (reachableAndReturnable.find(backwardNeighbor) == reachableAndReturnable.end()) {
-					backwardQ.push(backwardNeighbor);
-					reachableAndReturnable.insert(backwardNeighbor);
+	bool isGraphDirected() {
+		for (const auto& vertex : v) {
+			for (const auto& edge : vertex.second) {
+				const string& neighbor = edge.first;
+				if (v.find(neighbor) != v.end() && v[neighbor].count({ vertex.first, edge.second }) == 0) {
+					// Найдено ориентированное ребро
+					return true;
 				}
 			}
 		}
-		cout << "Вершины, достижимые из A и обратно в A:" << endl;
-		for (auto it = reachableAndReturnable.begin(); it != reachableAndReturnable.end(); ++it) {
-			cout << *it << endl;
-		}
+		return false;
 	}
-	void getVerticesReachableAndReturnableFrom1(string startVertex) {
-		set<string> reachableAndReturnableVertices;
-		queue<string> bfsQueue;
-		set<string> visitedVertices;
-		visitedVertices.insert(startVertex);
-		bfsQueue.push(startVertex);
 
-		while (!bfsQueue.empty()) {
-			string currentVertex = bfsQueue.front();
-			bfsQueue.pop();
-
-			// Check if we can reach the current vertex from the start vertex
-			if (v[currentVertex].find({ startVertex, 0 }) != v[currentVertex].end()) {
-				reachableAndReturnableVertices.insert(currentVertex);
-			}
-
-			// Explore unvisited neighbors
-			for (const auto& neighbor : v[currentVertex]) {
-				if (visitedVertices.find(neighbor.first) == visitedVertices.end()) {
-					visitedVertices.insert(neighbor.first);
-					bfsQueue.push(neighbor.first);
-				}
-			}
-		}
-
-		cout << "Vertices reachable and returnable from " << startVertex << ":" << endl;
-		for (const auto& vertex : reachableAndReturnableVertices) {
-			cout << vertex << endl;
-		}
-	}
-	
-	
 	void findReachableAndBacktrackableVertices(const string& startVertex) {
-		set<string> reachableVertices;
-		set<string> visited;
+		if (isGraphDirected()) {
 
-		queue<string> q;
-		q.push(startVertex);
-		visited.insert(startVertex);
 
-		while (!q.empty()) {
-			string currentVertex = q.front();
-			q.pop();
+			set<string> reachableVertices;
+			set<string> visited;
 
-			for (const pair<string, int>& neighbor : v[currentVertex]) {
-				string nextVertex = neighbor.first;
-				if (visited.find(nextVertex) == visited.end()) {
-					visited.insert(nextVertex);
-					q.push(nextVertex);
-					reachableVertices.insert(nextVertex);
+			queue<string> q;
+			q.push(startVertex);
+			visited.insert(startVertex);
+
+			while (!q.empty()) {
+				string currentVertex = q.front();
+				q.pop();
+
+				for (const pair<string, int>& neighbor : v[currentVertex]) {
+					string nextVertex = neighbor.first;
+					if (visited.find(nextVertex) == visited.end()) {
+						visited.insert(nextVertex);
+						q.push(nextVertex);
+						reachableVertices.insert(nextVertex);
+					}
 				}
 			}
-		}
 
-		set<string> backtrackableVertices;
-		for (const string& vertex : reachableVertices) {
-			if (isBacktrackable(startVertex, vertex)) {
-				backtrackableVertices.insert(vertex);
+			set<string> backtrackableVertices;
+			for (const string& vertex : reachableVertices) {
+				if (isBacktrackable(startVertex, vertex)) {
+					backtrackableVertices.insert(vertex);
+				}
+			}
+
+
+			cout << "Вершины, достижимые из данной и обратно:" << endl;
+			for (auto it = backtrackableVertices.begin(); it != backtrackableVertices.end(); ++it) {
+				cout << *it << endl;
 			}
 		}
-
-
-		cout << "Вершины, достижимые из данной и обратно:" << endl;
-		for (auto it = backtrackableVertices.begin(); it != backtrackableVertices.end(); ++it) {
-			cout << *it << endl;
-		}
+		else cout << "Ошибка: Граф ориентированный. Алгоритм Прима применяется только к неориентированным графам." << endl;
+		return;
 	}
 
 	bool isBacktrackable(const string& startVertex, const string& currentVertex) {
@@ -487,6 +437,57 @@ public:
 			}
 		}
 		return false;
+	}
+
+	void findMinimumSpanningTree() {
+		if (isGraphDirected()) {
+			cout << "Ошибка: Граф ориентированный. Алгоритм Прима применяется только к неориентированным графам." << endl;
+			return;
+		}
+		map<string, bool> visited; // Пометка вершин
+		map<string, string> parent; // Родительские вершины
+		map<string, int> key; // Минимальные веса вершин
+
+		// Инициализация структур данных
+		for (const auto& vertex : v) {
+			visited[vertex.first] = false;
+			key[vertex.first] = INT_MAX;
+		}
+
+		// Начнем с произвольной вершины
+		string startVertex = v.begin()->first;
+		key[startVertex] = 0;
+
+		// Создаем приоритетную очередь для вершин
+		priority_queue<pair<int, string>, vector<pair<int, string>>, greater<pair<int, string>>> pq;
+		pq.push({ 0, startVertex });
+
+		while (!pq.empty()) {
+			string u = pq.top().second;
+			pq.pop();
+			visited[u] = true;
+
+			for (const auto& edge : v[u]) {
+				string v = edge.first;
+				int weight = edge.second;
+
+				if (!visited[v] && weight < key[v]) {
+					key[v] = weight;
+					parent[v] = u;
+					pq.push({ key[v], v });
+				}
+			}
+		}
+
+		// Вывод минимального остовного дерева
+		for (const auto& vertex : v) {
+			if (parent.find(vertex.first) != parent.end()) {
+				string u = parent[vertex.first];
+				string v = vertex.first;
+				int weight = key[v];
+				cout << u << " -> " << v << "(" << weight << ")" << endl;
+			}
+		}
 	}
 
 private:

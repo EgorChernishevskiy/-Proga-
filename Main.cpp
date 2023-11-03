@@ -37,7 +37,7 @@ int main() {
 			<< "5 - Удалить ребро " << endl
 			<< "6 - Вывести список смежности графа в файл " << endl
 			<< "7 - Очистить граф " << endl
-			<< "8 - Выход " << endl 
+			<< "8 - Выход " << endl
 			<< "9 - Выберете задание " << endl << endl;
 		cout << "Введите номер действия, которое вы хотите сделать: ";
 		cin >> option;
@@ -121,13 +121,14 @@ int main() {
 				<< "3 - Построить граф, полученный однократным удалением вершин с нечётными степенями. " << endl
 				<< "4 - Проверить, является ли заданный орграф ацикличным. " << endl
 				<< "5 - Найти все достижимые из данной вершины орграфа, из которых можно попасть обратно в данную вершину. " << endl
+				<< "6 - Найти каркас минимального веса в неориентрованном взвешенном графе " << endl
 				<< "9 - Выйти из меню " << endl;
 			cout << "Введите номер действия, которое вы хотите сделать: ";
 			cin >> optInt;
 			switch (optInt) {
 			case 1:
 				cout << "Введите вершину: ";
-				cin >> name1; 
+				cin >> name1;
 				cout << GraphM[now].task1(name1);
 				break;
 			case 2:
@@ -139,7 +140,7 @@ int main() {
 				GraphM[now].task3();
 				break;
 			case 4:
-				
+
 				if (GraphM[now].isAcyclic() == true) {
 					cout << "граф является ацикличным " << endl;
 				}
@@ -153,6 +154,12 @@ int main() {
 					GraphM[now].findReachableAndBacktrackableVertices(name1);
 				}
 				else cout << "Граф неориентированный! ";
+				break;
+			case 6:
+				if (GraphM[now].isOriented() && GraphM[now].isWeighted()) {
+					cout << "Граф не удовлетворяет условю! ";
+				}
+				else GraphM[now].findMinimumSpanningTree();
 				break;
 			case 10:
 				break;
