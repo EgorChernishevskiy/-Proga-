@@ -8,6 +8,9 @@
 #include <string>
 #include <stack>
 #include "Graph.h"
+#include <unordered_set>
+#include <unordered_map>
+#include <limits>
 
 using namespace std;
 
@@ -27,6 +30,7 @@ int main() {
 	string name2;
 	string name3;
 	string opt;
+	int N;
 
 
 	while (true) {
@@ -124,7 +128,10 @@ int main() {
 				<< "5 - Найти все достижимые из данной вершины орграфа, из которых можно попасть обратно в данную вершину. " << endl
 				<< "6 - Требуется найти каркас минимального веса. " << endl
 				<< "7 - Вывести кратчайшие пути из вершины u до v1 и v2. " << endl
-				<< "9 - Выйти из меню " << endl;
+				<< "8 - Определить N-периферию для заданной вершины графа. " << endl
+				<< "9 -  Найти k кратчайших путей между вершинами u и v " << endl
+				<< "10 -  Найти Максимальный поток " << endl
+				<< "11 - Выйти из меню " << endl;
 			cout << "Введите номер действия, которое вы хотите сделать: ";
 			cin >> optInt;
 			switch (optInt) {
@@ -168,8 +175,32 @@ int main() {
 				cout << "Введите вершину v2: ";
 				cin >> name3;
 				GraphM[now].shortestPaths(name1, name2, name3);
+
+				break;
+			case 8:
+				cout << "Введите вершину: ";
+				cin >> name1;
+				cout << "Введите переферию: ";
+				cin >> N;
+				GraphM[now].findNPeriphery(name1, N);
+				break;
+			case 9:
+				cout << "Введите вершину 1: ";
+				cin >> name1;
+				cout << "Введите вершину 2: ";
+				cin >> name2;
+				cout << "Введите k: ";
+				cin >>	N;
+				GraphM[now].printKShortestPaths(name1, name2, N);
 				break;
 			case 10:
+				cout << "Введите вершину 1: ";
+				cin >> name1;
+				cout << "Введите вершину 2: ";
+				cin >> name2;
+				cout << "Max Flow: " << GraphM[now].findMaxFlow(name1, name2) << endl;
+				break;
+			case 11:
 				break;
 			default:
 				break;

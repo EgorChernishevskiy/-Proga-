@@ -24,7 +24,7 @@ public:
 		Weighted = stoi(strMain.substr(2, 1));
 		Oriented = stoi(strMain.substr(0, 1));
 		while (getline(in, strMain)) {
-			
+
 			int i = 0;
 			string strDop;
 			string strDopWeight;
@@ -60,7 +60,7 @@ public:
 	Graph(const Graph& g)
 	{
 		Weighted = g.Weighted;
-		Oriented = g.Oriented; 
+		Oriented = g.Oriented;
 		v = g.v;
 	}
 
@@ -108,7 +108,7 @@ public:
 	}
 	bool NodeConnect(string node1, string node2, int w) {         //добавить ребро
 		if (v.find(node1) != v.end() && v.find(node2) != v.end()) {
-			if (findInCertainNode(node1,node2)) {
+			if (findInCertainNode(node1, node2)) {
 				cout << "Вершины уже соединины" << endl;
 				return false;
 			}
@@ -191,7 +191,7 @@ public:
 
 	}
 
-	bool findInNodeList (string nodeToFind) {
+	bool findInNodeList(string nodeToFind) {
 		for (auto element : v) {
 			if (findInCertainNode(element.first, nodeToFind)) {
 				return true;
@@ -200,7 +200,7 @@ public:
 		return false;
 	}
 
-	bool findInCertainNode (string nodeMain, string nodeToFind) {
+	bool findInCertainNode(string nodeMain, string nodeToFind) {
 		set<pair<string, int>> v2 = v[nodeMain];
 		for (auto it = v2.begin(); it != v2.end(); it++) {
 			if (it->first == nodeToFind) {
@@ -214,7 +214,7 @@ public:
 	void Print() {
 		cout << "Граф: ";
 		if (Oriented) cout << "Ориентированный, ";
-		else cout << "Неориентированный, "; 
+		else cout << "Неориентированный, ";
 		if (Weighted) cout << "Взвешенный" << endl;
 		else cout << "Невзвешенный" << endl;
 		for (auto element : v) {
@@ -428,8 +428,8 @@ public:
 			cout << vertex << endl;
 		}
 	}
-	
-	
+
+
 	void findReachableAndBacktrackableVertices(const string& startVertex) {
 		set<string> reachableVertices;
 		set<string> visited;
@@ -629,6 +629,181 @@ public:
 			}
 		}
 		else cout << "Ошибка: Граф невзвешенный. Алгоритм применяется только к взвешенным графам." << endl;
+	}
+
+	void findNPeriphery(const std::string& start, int N) {
+		std::map<std::string, int> distances;
+		std::set<std::string> periphery;
+
+		// Инициализация расстояний
+		for (const auto& vertex : v) {
+			if (vertex.first == start)
+				distances[vertex.first] = 0;
+			else
+				distances[vertex.first] = INT_MAX;
+		}
+
+		// Выполнение N итераций алгоритма Беллмана-Форда
+		for (int i = 0; i < N; ++i) {
+			for (const auto& vertex : v) {
+				const std::string& src = vertex.first;
+
+				for (const auto& edge : vertex.second) {
+					const std::string& dest = edge.first;
+					int weight = edge.second;
+
+					if (distances[src] != INT_MAX && distances[src] + weight < distances[dest]) {
+						distances[dest] = distances[src] + weight;
+					}
+				}
+			}
+		}
+
+		// Поиск вершин с расстоянием больше N
+		for (const auto& vertex : v) {
+			if (distances[vertex.first] > N) {
+				periphery.insert(vertex.first);
+			}
+		}
+
+		// Вывод периферии на экран
+		std::cout << "N-перефириря  " << ":\n";
+		for (const auto& vertex : periphery) {
+			std::cout << vertex << " ";
+		}
+		std::cout << std::endl;
+	}
+
+
+
+
+	void printKShortestPaths(string u, string v1, int k) {
+		priority_queue<pair<int, string>, vector<pair<int, string>>, greater<pair<int, string>>> pq;//Создаётся приоритетная очередь с парами (вес, вершина) в порядке возрастания веса.
+		map<string, vector<pair<int, vector<string>>>> shortestPaths;//создаётся  shortestPaths для хранения кратчайших путей.
+
+		pq.push(make_pair(0, u));//Добавляется начальная вершина в приоритетную очередь и в shortestPaths.
+		shortestPaths[u].push_back(make_pair(0, vector<string>{u}));
+
+		while (!pq.empty()) {
+			string currentVertex = pq.top().second;//Извлекается вершина с наименьшим весом из приоритетной очереди.
+			int currentWeight = pq.top().first;
+			pq.pop();
+
+			if (currentVertex == v1) {// Если это конечная вершина и количество найденных кратчайших путей уже равно k, то выходим из цикла
+				if (shortestPaths[currentVertex].size() >= k) {
+					break;
+				}
+			}
+
+			for (auto neighbor : v[currentVertex]) {//Для каждого соседа текущей вершины
+				string nextVertex = neighbor.first;
+				int nextWeight = neighbor.second;//Вычисляется вес нового пути через этого соседа
+				int weight = currentWeight + nextWeight;
+
+				vector<pair<int, vector<string>>>& paths = shortestPaths[nextVertex];//Получаем список кратчайших путей до соседа из словаря shortestPaths
+
+				if (paths.size() < k || weight < paths.back().first) {//Если список пустой или новый путь короче последнего в списке, 
+					vector<string> path = shortestPaths[currentVertex].back().second;//то добавляем новый путь в список и обрезаем список до k элементов.
+					path.push_back(nextVertex);
+					paths.push_back(make_pair(weight, path));
+
+					sort(paths.begin(), paths.end(),
+						[](const pair<int, vector<string>>& a, const pair<int, vector<string>>& b) {
+							return a.first < b.first;
+						});
+
+					if (paths.size() > k) {
+						paths.pop_back();
+					}
+
+					pq.push(make_pair(weight, nextVertex));//Добавляем новую пару (вес, сосед) в приоритетную очередь.
+				}
+			}
+		}
+
+		cout << "K кратчайших путей между " << u << " и " << v1 << ":" << endl;//. Выводим результаты
+
+		if (shortestPaths[v1].size() < k) {
+			cout << "Путей не найдено" << endl;
+		}
+		else {
+			for (const auto& path : shortestPaths[v1]) {
+				cout << "Путь: ";
+				for (const auto& vertex : path.second) {
+					cout << vertex << " -> ";
+				}
+				cout << "Вес: " << path.first << endl;
+			}
+		}
+	}
+	//Форда-Фалкерсона
+	bool bfs(map<string, pair<string, int>>& parent, string source, string sink) {
+		map<string, bool> visited;//Создаётся словарь visited для хранения информации о посещении вершин.
+		queue<string> q;//Создаётся очередь q и добавляется в неё начальная вершина source.
+		q.push(source);
+		visited[source] = true;//Помечаем начальную вершину как посещённую.
+
+		while (!q.empty()) {
+			string current = q.front();//Извлекаем вершину current из очереди.
+			q.pop();
+
+			for (const auto& neighbor : v[current]) {//Для каждого соседа neighbor текущей вершины:
+				string v1 = neighbor.first;//Получаем вершину v1 и её пропускную способность capacity.
+				int capacity = neighbor.second;
+				// Если v1 ещё не была посещена и capacity > 0, то помечаем её как посещённую, добавляем её в очередь, 
+				if (!visited[v1] && capacity > 0) {//записываем информацию о родительской вершине 													
+					q.push(v1);						//и пропускной способности в словарь parent.
+					visited[v1] = true;
+					parent[v1] = { current, capacity };
+
+					if (v1 == sink) {//Если v1 равна sink, то мы нашли путь и возвращаем true.
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+
+
+	int findMaxFlow(const string& source, const string& sink) {
+		map<string, pair<string, int>> parent;
+
+		//Создаётся словарь parent для хранения информации о найденных путях
+		for (const auto& vertex : v) {
+			parent[vertex.first] = { "", 0 };//Инициализируем parent для каждой вершины графа.
+		}
+
+		int maxFlow = 0;//Создаём переменную maxFlow для хранения максимального потока, изначально равную 0.
+
+		while (bfs(parent, source, sink)) {//Пока существует путь между истоком и стоком:
+			int pathFlow = INT_MAX;//Инициализируем pathFlow значением INT_MAX.
+
+			//  Находим минимальную пропускную способность на пути от стока к истоку, используя информацию из словаря parent.
+			string v1 = sink;
+			while (v1 != source) {
+				string u = parent[v1].first;
+				int capacity = parent[v1].second;
+				pathFlow = min(pathFlow, capacity);
+				v1 = u;
+			}
+
+			// Обновляем остаточные пропускные способности и обратные рёбра в графе, используя 
+			v1 = sink; //информацию из словаря parent и найденную минимальную пропускную способность
+			while (v1 != source) {
+				string u = parent[v1].first;
+				v[u].erase({ v1, parent[v1].second });
+				v[v1].insert({ u, parent[v1].second });
+				v[u].insert({ v1, parent[v1].second - pathFlow });
+				v1 = u;
+			}
+
+			maxFlow += pathFlow;//Добавляем найденную пропускную способность к maxFlow
+		}
+
+		return maxFlow;
 	}
 
 private:
